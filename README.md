@@ -1,7 +1,7 @@
 # 💎 Luxury Retail Analytics — Customer Intelligence & RFM Segmentation Dashboard
 
 <p align="center">
-  <img src="assets/dashboard_screenshot.png" alt="Luxury Retail Dashboard Overview" width="100%">
+  <img src="images/dashboard_screenshot.png" alt="Luxury Retail Dashboard Overview" width="100%">
 </p>
 
 ---
