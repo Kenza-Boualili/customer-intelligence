@@ -1,7 +1,3 @@
--- =========================================================================
--- CUSTOMER INTELLIGENCE & SEGMENTATION - REQUÊTES SQL PROFESSIONNELLES
--- =========================================================================
-
 -- 1. Top 10 des clients selon le chiffre d'affaires
 SELECT 
     c.customer_id,
@@ -48,14 +44,18 @@ WHERE recency > 180
 ORDER BY monetary DESC;
 
 
--- 5. Fréquence moyenne et panier moyen par segment RFM
+-- 5. Fréquence moyenne et panier moyen par segment RFM 
 SELECT 
     r.segment,
     ROUND(AVG(r.frequency), 2) AS avg_frequency,
     ROUND(AVG(r.monetary), 2) AS avg_monetary,
-    ROUND(AVG(t.total_amount), 2) AS avg_basket_size
+    ROUND(SUM(t.total_spend) / SUM(t.total_tx), 2) AS avg_basket_size
 FROM customer_rfm r
-JOIN transactions t ON r.customer_id = t.customer_id
+JOIN (
+    SELECT customer_id, COUNT(transaction_id) AS total_tx, SUM(total_amount) AS total_spend
+    FROM transactions
+    GROUP BY customer_id
+) t ON r.customer_id = t.customer_id
 GROUP BY r.segment
 ORDER BY avg_monetary DESC;
 
