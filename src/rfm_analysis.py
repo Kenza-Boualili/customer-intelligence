@@ -63,10 +63,10 @@ def segment_customer(row):
         return "Champions"
     elif r >= 3 and f >= 3:
         return "Loyal Customers"
-    elif r >= 4 and f <= 2:
-        return "Potential Loyalists"
     elif r == 5 and f == 1:
         return "New Customers"
+    elif r >= 4 and f <= 2:
+        return "Potential Loyalists"
     elif r <= 2 and f >= 3:
         return "At Risk"
     elif r <= 2 and f <= 2 and m >= 3:
