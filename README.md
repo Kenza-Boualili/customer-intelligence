@@ -34,7 +34,7 @@ The architecture spans the full data analytics lifecycle:
 - **Registered Clients:** `2,000`
 - **Active Buyers (with purchases):** `1,971`
 - **Total Transactions:** `15,000`
-- **Average Spend per Active Client:** `~€58.19K`
+- **Average Spend per Active Client:** `~€€58.21K`
 
 ---
 
