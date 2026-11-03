@@ -1,14 +1,19 @@
-# 💎 Luxury Retail Customer Intelligence & RFM Analytics Dashboard
+# 💎 Luxury Retail Analytics — Customer Intelligence & RFM Segmentation Dashboard
+
+<p align="center">
+  <img src="assets/dashboard_screenshot.png" alt="Luxury Retail Dashboard Overview" width="100%">
+</p>
+
+---
 
 ## Executive Summary
 
-This project delivers an end-to-end business intelligence and client intelligence solution tailored for high-end luxury houses (*Maison de Luxe*). Designed to align with the analytical standards of leading prestige groups like **LVMH, Hermès, and Kering**, this interactive platform synthesizes total enterprise revenue, customer count, average spend per client, dynamic country filtering, and deep **RFM (Recency, Frequency, Monetary) segmentation**. All datasets used in this project are synthetically generated for educational and analytical purposes. No real customer or company data is used.
+This project delivers an end-to-end business intelligence solution tailored for high-end luxury houses (*Maison de Luxe* — Joaillerie, Horlogerie, Maroquinerie). Designed to align with the analytical standards of leading prestige groups like **LVMH, Hermès, and Kering**, this interactive platform synthesizes customer lifetime value, RFM (Recency, Frequency, Monetary) segmentation, and high-net-worth client dynamics (VIP / VIC identification). All datasets used in this project are synthetically generated for educational and analytical purposes. No real customer or company data is used.
 
 The architecture spans the full data analytics lifecycle:
-
-1. **Data Engineering & Preparation** via Python (`pandas`, `numpy`) and **Power Query** (Locale US formatting & type casting).
-2. **Relational Data Modeling & RFM Segmentation** via SQL (`sqlite3`) and DAX Engine.
-3. **Interactive Executive Visualization** via Power BI (*Minimalist Dark `#121212` & Gold `#D4AF37` Theme*).
+1. **Data Engineering & Preparation** via Python (`pandas`, `numpy`).
+2. **Relational Querying & Scoring** via SQL (`sqlite3`) and custom Python scoring logic.
+3. **Interactive Executive Visualization** via Power BI (*Minimalist Dark & Gold Theme*).
 
 ---
 
@@ -16,90 +21,81 @@ The architecture spans the full data analytics lifecycle:
 
 | Layer | Technology | Usage & Functionality |
 | :--- | :--- | :--- |
-| **Data Engine** | `Python 3.10+` | Dataset orchestration, transaction modeling, schema normalization |
-| **Data Transformation** | `Power Query (M)` | Decimal conversion, culture handling (US Locale), string clean-up |
-| **Visual Analytics** | `Power BI Desktop` | Interactive dynamic slicers, DAX measures, luxury aesthetic custom styling |
+| **Data Engine** | `Python 3.10+` | Dataset orchestration, transaction modeling, RFM score calculation |
+| **Database** | `SQL (SQLite)` | Relational querying, aggregation, customer segment storage |
+| **Visual Analytics** | `Power BI Desktop` | Interactive dashboarding, dynamic slicers, DAX measures (`Total Revenue`, `Total Customers`, `Avg Customer Spend`) |
 | **Documentation** | `Markdown / VS Code` | Technical reporting and executive insights |
 
 ---
 
 ## 📊 Business Metrics & Key Performance Indicators
 
-- **Total Revenue:** `€114.70M`
-- **Total Active Customers:** `2,000`
-- **Average Spend per Customer:** `€57.37K`
-- **Primary RFM Revenue Driver:** `Champions Segment`
-- **Geographic Markets:** `France, USA, Japan`
+- **Total Revenue:** `€114.74M`
+- **Registered Clients:** `2,000`
+- **Active Buyers (with purchases):** `1,971`
+- **Total Transactions:** `15,000`
+- **Average Spend per Active Client:** `~€58.19K`
 
 ---
 
-## 💻 Relational Database & DAX Formulations
-
-### DAX Measures (`pbix/measures.dax`)
-
-```dax
--- ============================================================
--- LUXURY RETAIL ANALYTICS — DAX MEASURES
--- ============================================================
-
--- 1. Total Enterprise Revenue
-Total Revenue = SUM(transactions[total_amount])
-
--- 2. Total Unique Active Customers
-Total Customers = DISTINCTCOUNT(customers[customer_id])
-
--- 3. Average Spend per Customer
-Avg Customer Spend = DIVIDE([Total Revenue], [Total Customers], 0)
-```
-
-### SQL Interrogation Queries (`queries.sql`)
+## 💻 Relational Database Interrogation (`sql/queries.sql`)
 
 ```sql
 -- ============================================================
--- RFM & VIP CLIENT ANALYSIS QUERIES
+-- LUXURY RETAIL ANALYTICS — CUSTOMER INTELLIGENCE QUERIES
 -- ============================================================
 
--- 1. Revenue & Customer Distribution by RFM Segment
+-- 1. Revenue & Transaction Volume by Customer RFM Segment
 SELECT 
-    r.segment,
-    COUNT(DISTINCT r.customer_id) AS total_customers,
-    ROUND(SUM(t.total_amount), 2) AS total_revenue,
-    ROUND(AVG(t.total_amount), 2) AS avg_spend_per_customer
-FROM customer_rfm r
-JOIN transactions t ON r.customer_id = t.customer_id
-GROUP BY r.segment
+    segment,
+    COUNT(DISTINCT customer_id) AS total_customers,
+    ROUND(SUM(monetary), 2) AS total_revenue,
+    ROUND(AVG(monetary), 2) AS average_customer_spend
+FROM customer_rfm
+GROUP BY segment
 ORDER BY total_revenue DESC;
 
--- 2. Top 10 VIP High-Net-Worth Individual (HNWI) Client Identification
+-- 2. Top 10 High-Net-Worth VIP Customers
 SELECT 
     c.customer_id,
     c.country,
     r.segment,
-    ROUND(SUM(t.total_amount), 2) AS total_revenue
-FROM customers c
-JOIN customer_rfm r ON c.customer_id = r.customer_id
-JOIN transactions t ON c.customer_id = t.customer_id
-GROUP BY c.customer_id, c.country, r.segment
+    ROUND(r.monetary, 2) AS total_revenue
+FROM customer_rfm r
+JOIN customers c ON r.customer_id = c.customer_id
 ORDER BY total_revenue DESC
 LIMIT 10;
+
+-- 3. Revenue Breakdown by Market / Country
+SELECT 
+    c.country,
+    COUNT(DISTINCT t.customer_id) AS active_buyers,
+    ROUND(SUM(t.total_amount), 2) AS total_revenue
+FROM transactions t
+JOIN customers c ON t.customer_id = c.customer_id
+GROUP BY c.country
+ORDER BY total_revenue DESC;
 ```
 
 ---
 
 ## 🎯 Strategic Business Recommendations
 
-### 1. Capitalization on the *Champions* RFM Segment
-- **Finding:** The *Champions* segment contributes the highest proportion of the €114.70M total revenue.
-- **Action:** Design hyper-personalized clienteling initiatives, including early access to limited edition high-jewelry collections and exclusive private salon events in Paris, Tokyo, and New York.
+### 1. Tailored Engagement for "Champions" & Top VIPs
+- **Finding:** The top-tier segments drive a massive concentration of total revenue relative to their headcount.
+- **Action:** Deploy exclusive clienteling initiatives (private salon viewings, bespoke product pre-orders, dedicated personal advisors) across core flagship markets (Paris, Tokyo, New York).
+  
+### 2. Reactivation Strategy for "At Risk" High-Spenders
+- **Finding:** A subset of clients with high historical monetary value show declining recency scores.
+- **Action:** Implement targeted, personalized re-engagement campaigns curated around high-end product novelties and private events to recover slipping customer equity.
+  
+### 3. Nurturing "Potential Loyalists" & "New Customers"
+- **Finding:** Recent adjustments to segmentation logic accurately capture newly acquired buyers entering the ecosystem.
+- **Action:** Design streamlined onboarding touchpoints and welcome experiences to transition single-purchase clients into recurring brand loyalists.
 
-### 2. High Average Spend Optimization (€57.37K / Client)
-- **Finding:** Average spend per client stands at a high €57.37K, confirming strong brand equity and multi-category purchasing.
-- **Action:** Expand cross-category concierge recommendations (e.g., pairing high-watchmaking acquisitions with custom leather goods) to further elevate ticket size.
-
-### 3. Targeted Re-engagement Strategy for *At Risk* Clients
-- **Finding:** A noticeable subset of formerly high-spending clients show declining recency scores (*At Risk*).
-- **Action:** Empower Client Advisors with automated alerts to offer bespoke anniversary gifts or private home appointments to re-ignite engagement before churn occurs.
-
+### 4. Cross-Border Market Optimization
+- **Finding:** Regional filtering via international slicers reveals distinct purchasing behaviors across markets (France, USA, Japan).
+- **Action:** Tailor local stock allocation and marketing communication to align with regional preferences in high jewelry, watchmaking, and leather goods.
 ---
 
 <p align="center">
