@@ -1,7 +1,7 @@
 # 💎 Luxury Retail Analytics — Customer Intelligence & RFM Segmentation Dashboard
 
 <p align="center">
-  <img src="images/dashboardscreenshot.png" alt="Luxury Retail Dashboard Overview" width="100%">
+  <img src="images/dashboard_screenshot.png" alt="Luxury Retail Dashboard Overview" width="100%">
 </p>
 
 ---
@@ -34,7 +34,7 @@ The architecture spans the full data analytics lifecycle:
 - **Registered Clients:** `2,000`
 - **Active Buyers (with purchases):** `1,971`
 - **Total Transactions:** `15,000`
-- **Average Spend per Active Client:** `~€58.19K`
+- **Average Spend per Active Client:** `~€€58.21K`
 
 ---
 
